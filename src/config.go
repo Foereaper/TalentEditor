@@ -1,6 +1,6 @@
-// Copyright (c) 2025 DBCTool
+// Copyright (c) 2025 TalentEditor
 //
-// DBCTool is licensed under the MIT License.
+// TalentEditor is licensed under the MIT License.
 // See the LICENSE file for details.
 
 package main

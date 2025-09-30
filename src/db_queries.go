@@ -1,3 +1,8 @@
+// Copyright (c) 2025 TalentEditor
+//
+// TalentEditor is licensed under the MIT License.
+// See the LICENSE file for details.
+
 package main
 
 import (
