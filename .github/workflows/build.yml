@@ -39,7 +39,7 @@ jobs:
       # Windows
       - name: Build Windows binary
         run: |
-          GOOS=windows GOARCH=amd64 go build -ldflags="-H=windowsgui" -C src -o ../bin/dbctool.exe
+          GOOS=windows GOARCH=amd64 go build -C src -ldflags="-H=windowsgui" -o ../bin/dbctool.exe
       - uses: actions/upload-artifact@v4
         with:
           name: dbctool-windows
