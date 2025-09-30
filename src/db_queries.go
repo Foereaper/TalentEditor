@@ -11,7 +11,7 @@ import (
     "strings"
 )
 
-// --- TalentTab queries ---
+// TalentTab queries
 func GetAllTalentTabs(ctx *AppContext) (map[int]TalentTab, error) {
     query := `
         SELECT id, name_enus, spell_icon, class_mask, order_index, background_file, creature_family
@@ -48,7 +48,7 @@ func GetAllTalentTabs(ctx *AppContext) (map[int]TalentTab, error) {
     return tabs, nil
 }
 
-// --- Spell queries ---
+// Spell queries
 func GetSpellsByIDs(ctx *AppContext, ids []int) (map[int]Spell, error) {
     result := make(map[int]Spell)
     if len(ids) == 0 {
@@ -108,6 +108,7 @@ func GetSpellsByIDs(ctx *AppContext, ids []int) (map[int]Spell, error) {
     return result, nil
 }
 
+// Talent queries
 func GetTalentsForSpec(ctx *AppContext, specID int) ([]Talent, []int, error) {
     query := `
         SELECT id, spec_id, tier_id, column_index,
@@ -161,7 +162,7 @@ func GetTalentsForSpec(ctx *AppContext, specID int) ([]Talent, []int, error) {
     return talents, spellIDs, nil
 }
 
-// --- SpellIcon queries ---
+// SpellIcon queries
 func GetAllSpellIcons(ctx *AppContext) (map[int]string, error) {
     if ctx.SpellIcons != nil {
         return ctx.SpellIcons, nil
@@ -196,7 +197,7 @@ func GetAllSpellIcons(ctx *AppContext) (map[int]string, error) {
     return icons, nil
 }
 
-// --- Classes queries ---
+// Classes queries
 func GetAllClasses(ctx *AppContext) (map[int]ChrClass, error) {
     rows, err := queryWithDebug(ctx.DB, "SELECT id, name_enus, pet_name_token FROM ChrClasses")
     if err != nil {
@@ -222,7 +223,7 @@ func GetAllClasses(ctx *AppContext) (map[int]ChrClass, error) {
 }
 
 
-// --- Insert/Update/Delete Talent ---
+// Insert/Update/Delete Talent
 func InsertTalentQuery(t *Talent) (string, []interface{}) {
     query := `INSERT INTO Talent (
         id, spec_id, tier_id, column_index,
@@ -290,8 +291,8 @@ func execWithDebug(db *sql.DB, query string, args ...interface{}) (sql.Result, e
 }
 
 func nullInt64ToInterface(n sql.NullInt64) interface{} {
-	if n.Valid {
-		return n.Int64
-	}
-	return nil
+    if n.Valid {
+        return n.Int64
+    }
+    return nil
 }

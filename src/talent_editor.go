@@ -13,7 +13,7 @@ import (
     "image"
     "image/color"
     "image/png"
-	"io/fs"
+    "io/fs"
     "math"
     "sort"
     "strconv"
@@ -179,6 +179,7 @@ func main() {
     )
     window.SetContent(fynetooltip.AddWindowToolTipLayer(mainContainer, window.Canvas()))
     
+    // Create application context map
     ctx := &AppContext{
         DB:              db,
         GridContainer:   gridContainer,
@@ -190,6 +191,7 @@ func main() {
     window.ShowAndRun()
 }
 
+// loadTabs constructs the class and pet talent tabs on the left hand pane
 func loadTabs(ctx *AppContext, tabsList *widget.List) {
     tabs, err := GetAllTalentTabs(ctx)
     if err != nil {
@@ -280,7 +282,7 @@ func loadTabs(ctx *AppContext, tabsList *widget.List) {
     tabsList.Refresh()
 }
 
-// loadTalentsForTab queries talents with spec_id = tab.ID and builds a visual grid
+// loadTalentsForTab queries talents and builds the visual talent grid
 func loadTalentsForTab(ctx *AppContext, tab TalentTab) {
     // Clear previous content
     ctx.GridContainer.Objects = nil
@@ -339,7 +341,7 @@ func loadTalentsForTab(ctx *AppContext, tab TalentTab) {
         }
     }
 
-    // --- Draw arrows between talents ---
+    // Draw arrows between talents
     drawTalentArrows(gridWrapper, buttonMap, talentMap)
 
     ctx.GridContainer.Add(container.NewCenter(gridWrapper))
@@ -369,12 +371,12 @@ func mapTalentsToGrid(talents []Talent, rows, cols int) [][]*Talent {
     return grid
 }
 
-// openTalentEditor shows a form for viewing/editing a Talent
+// openTalentEditor shows the form for viewing/editing a Talent
 func openTalentEditor(ctx *AppContext, t *Talent, isNew bool, reloadTab func()) {
     ctx.EditorContainer.Objects = nil
     const entryWidth = 150
 
-    // --- Helpers ---
+    // Helpers
     makeEntry := func(def string) *widget.Entry {
         e := widget.NewEntry()
         e.SetText(def)
@@ -410,7 +412,7 @@ func openTalentEditor(ctx *AppContext, t *Talent, isNew bool, reloadTab func()) 
         }
     }
 
-    // --- Build form entries ---
+    // Build form entries
     talentID := useLabel(fmt.Sprintf("%d", t.ID))
     specEntry := useLabel(getIntStr(t.SpecID))
     tierEntry := useLabel(getIntStr(t.TierID))
@@ -433,7 +435,7 @@ func openTalentEditor(ctx *AppContext, t *Talent, isNew bool, reloadTab func()) 
     allowPet1Entry := makeEntry(getIntStr(t.AllowForPetFlags1))
     allowPet2Entry := makeEntry(getIntStr(t.AllowForPetFlags2))
 
-    // --- Build form items ---
+    // Build form items
     formItems := []*widget.FormItem{
         makeFormItem("Talent ID", talentID),
         makeFormItem("Spec ID", specEntry),
@@ -458,7 +460,7 @@ func openTalentEditor(ctx *AppContext, t *Talent, isNew bool, reloadTab func()) 
     form := widget.NewForm(formItems...)
     formFiller := container.NewMax(form)
 
-    // --- Build buttons ---
+    // Build editor buttons
     saveBtn := widget.NewButton("Save", func() {
         saveTalentHandler(ctx, t, isNew, fields, reloadTab)
     })
@@ -472,9 +474,9 @@ func openTalentEditor(ctx *AppContext, t *Talent, isNew bool, reloadTab func()) 
 
     var btnRow fyne.CanvasObject
     if isNew {
-        btnRow = NewButtonRow(container.NewHBox(saveBtn, cancelBtn), nil)
+        btnRow = NewEditorButtonRow(container.NewHBox(saveBtn, cancelBtn), nil)
     } else {
-        btnRow = NewButtonRow(container.NewHBox(saveBtn, cancelBtn), deleteBtn)
+        btnRow = NewEditorButtonRow(container.NewHBox(saveBtn, cancelBtn), deleteBtn)
     }
 
     ctx.EditorContainer.Objects = []fyne.CanvasObject{
@@ -484,8 +486,8 @@ func openTalentEditor(ctx *AppContext, t *Talent, isNew bool, reloadTab func()) 
 }
 
 
-// Fixed-height button row with left/right layout
-func NewButtonRow(leftButtons fyne.CanvasObject, rightButton fyne.CanvasObject) *fyne.Container {
+// Fixed-height editor button row with left/right layout
+func NewEditorButtonRow(leftButtons fyne.CanvasObject, rightButton fyne.CanvasObject) *fyne.Container {
     bg := canvas.NewRectangle(color.NRGBA{A: 0}) // transparent background
     height := float32(40)
     bg.SetMinSize(fyne.NewSize(0, height))
@@ -545,40 +547,6 @@ func NewTransparentIconWithBorder(width, height int, borderColor color.NRGBA, da
     var buf bytes.Buffer
     png.Encode(&buf, img)
     return fyne.NewStaticResource("transparent_border.png", buf.Bytes())
-}
-
-func createArrowHead(x1, y1, x2, y2 float32, size float32) []fyne.CanvasObject {
-    dx := x2 - x1
-    dy := y2 - y1
-    length := float32(math.Hypot(float64(dx), float64(dy)))
-    if length == 0 {
-        return nil
-    }
-
-    ux := dx / length
-    uy := dy / length
-
-    // Perpendicular vector
-    px := -uy
-    py := ux
-
-    leftX := x2 - ux*size + px*size/2
-    leftY := y2 - uy*size + py*size/2
-
-    rightX := x2 - ux*size - px*size/2
-    rightY := y2 - uy*size - py*size/2
-
-    leftLine := canvas.NewLine(color.NRGBA{R: 255, G: 0, B: 0, A: 255})
-    leftLine.StrokeWidth = 2
-    leftLine.Position1 = fyne.NewPos(x2, y2)
-    leftLine.Position2 = fyne.NewPos(leftX, leftY)
-
-    rightLine := canvas.NewLine(color.NRGBA{R: 255, G: 0, B: 0, A: 255})
-    rightLine.StrokeWidth = 2
-    rightLine.Position1 = fyne.NewPos(x2, y2)
-    rightLine.Position2 = fyne.NewPos(rightX, rightY)
-
-    return []fyne.CanvasObject{leftLine, rightLine}
 }
 
 // Draw arrows between talents based on prerequisites
@@ -697,6 +665,41 @@ func drawStepArrow(gridWrapper *fyne.Container, parentX, parentY, parentW, paren
     }
 }
 
+func createArrowHead(x1, y1, x2, y2 float32, size float32) []fyne.CanvasObject {
+    dx := x2 - x1
+    dy := y2 - y1
+    length := float32(math.Hypot(float64(dx), float64(dy)))
+    if length == 0 {
+        return nil
+    }
+
+    ux := dx / length
+    uy := dy / length
+
+    // Perpendicular vector
+    px := -uy
+    py := ux
+
+    leftX := x2 - ux*size + px*size/2
+    leftY := y2 - uy*size + py*size/2
+
+    rightX := x2 - ux*size - px*size/2
+    rightY := y2 - uy*size - py*size/2
+
+    leftLine := canvas.NewLine(color.NRGBA{R: 255, G: 0, B: 0, A: 255})
+    leftLine.StrokeWidth = 2
+    leftLine.Position1 = fyne.NewPos(x2, y2)
+    leftLine.Position2 = fyne.NewPos(leftX, leftY)
+
+    rightLine := canvas.NewLine(color.NRGBA{R: 255, G: 0, B: 0, A: 255})
+    rightLine.StrokeWidth = 2
+    rightLine.Position1 = fyne.NewPos(x2, y2)
+    rightLine.Position2 = fyne.NewPos(rightX, rightY)
+
+    return []fyne.CanvasObject{leftLine, rightLine}
+}
+
+// Creates a new talent button to be populated in the talent grid at the specified coordinates
 func createTalentButton(
     ctx *AppContext,
     tab TalentTab,
@@ -824,14 +827,12 @@ func deleteTalentHandler(ctx *AppContext, talent *Talent, reloadTab func()) {
     confirm.Show()
 }
 
-// updateTalent performs an UPDATE against the Talent table for existing id
 func updateTalent(ctx *AppContext, talent *Talent) error {
     query, args := UpdateTalentQuery(talent)
     _, err := execWithDebug(ctx.DB, query, args...)
     return err
 }
 
-// insertTalent performs an INSERT into Talent
 func insertTalent(ctx *AppContext, talent *Talent) error {
     if talent.ID == 0 {
         var maxID int64
