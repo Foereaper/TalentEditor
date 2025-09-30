@@ -27,6 +27,8 @@ It uses the same database tables as [DBCTool](https://github.com/Foereaper/DBCTo
 
 ## Installation
 
+If you do not wish to build the editor yourself, you can find a prebuilt binary under the latest Build action.
+
 ### Prerequisites
 
 * Go 1.21+
