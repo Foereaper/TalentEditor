@@ -63,7 +63,7 @@ go build -C src -o ../TalentEditor.exe
 
 On first run, the application generates a `config.json` template:
 
-```json
+```
 {
   "dbc": {
     "user": "root",
@@ -71,7 +71,7 @@ On first run, the application generates a `config.json` template:
     "host": "127.0.0.1",
     "port": "3306",
     "name": "dbc_db"
-    }
+  }
 }
 ```
 
