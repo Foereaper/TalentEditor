@@ -28,6 +28,11 @@ jobs:
           cache: false
           go-version: '>=1.20'
 
+      - name: Install C Cross-Compiler (for Windows target)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-mingw-w64-x86-64
+
       - name: Install dependencies
         run: |
           go mod tidy -C src
@@ -39,7 +44,7 @@ jobs:
       # Windows
       - name: Build Windows binary
         run: |
-          GOOS=windows GOARCH=amd64 go build -C src -ldflags="-H=windowsgui" -o ../bin/dbctool.exe
+          CGO_ENABLED=1 GOOS=windows GOARCH=amd64 CC=x86_64-w64-mingw32-gcc go build -C src -ldflags="-H=windowsgui" -o ../bin/dbctool.exe
       - uses: actions/upload-artifact@v4
         with:
           name: dbctool-windows
