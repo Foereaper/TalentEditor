@@ -1,0 +1,6 @@
+/bin
+
+config.json
+*.exe
+*.ps1
+*.sum

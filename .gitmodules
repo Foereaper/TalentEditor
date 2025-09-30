@@ -1,0 +1,12 @@
+[submodule "dep/fyne-tooltip"]
+	path = dep/fyne-tooltip
+	url = https://github.com/dweymouth/fyne-tooltip
+[submodule "dep/mysql"]
+	path = dep/mysql
+	url = https://github.com/go-sql-driver/mysql
+[submodule "dep/edwards25519"]
+	path = dep/edwards25519
+	url = https://github.com/FiloSottile/edwards25519
+[submodule "dep/fyne"]
+	path = dep/fyne
+	url = https://github.com/fyne-io/fyne
