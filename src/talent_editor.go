@@ -31,27 +31,8 @@ import (
 
 //go:embed static/icons/icons.zip
 var iconsZip []byte
-
 var iconsFS fs.FS
-
 var iconLookup map[string]string
-
-func init() {
-    r, err := zip.NewReader(bytes.NewReader(iconsZip), int64(len(iconsZip)))
-    if err != nil {
-        panic(err)
-    }
-    iconsFS = r
-
-    iconLookup = make(map[string]string)
-    fs.WalkDir(iconsFS, ".", func(path string, d fs.DirEntry, err error) error {
-        if !d.IsDir() {
-            // store lowercase → actual name
-            iconLookup[strings.ToLower(path)] = path
-        }
-        return nil
-    })
-}
 
 const (
     MAX_NUM_TALENT_TIERS = 15
@@ -105,6 +86,23 @@ type AppContext struct {
     // Caches
     SpellIcons map[int]string
     Spells     map[int]Spell
+}
+
+func init() {
+    r, err := zip.NewReader(bytes.NewReader(iconsZip), int64(len(iconsZip)))
+    if err != nil {
+        panic(err)
+    }
+    iconsFS = r
+
+    iconLookup = make(map[string]string)
+    fs.WalkDir(iconsFS, ".", func(path string, d fs.DirEntry, err error) error {
+        if !d.IsDir() {
+            // store lowercase → actual name
+            iconLookup[strings.ToLower(path)] = path
+        }
+        return nil
+    })
 }
 
 func main() {
