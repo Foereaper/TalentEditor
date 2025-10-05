@@ -32,7 +32,14 @@ If you do not wish to build the editor yourself, you can find a prebuilt binary 
 ### Prerequisites
 
 * Go 1.21+
-* MySQL database with DBC tables populated (compatible with DBCTool)
+* MySQL database with DBC tables populated (using DBCTool to import)
+
+Required DBC's imported to SQL are as follows:
+- ChrClasses
+- Spell
+- SpellIcon
+- Talent
+- TalentTab
 
 ### Steps
 
